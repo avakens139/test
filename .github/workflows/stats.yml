@@ -1,0 +1,39 @@
+name: Download and Push Large Video with Git LFS
+
+on:
+  workflow_dispatch:  # Manually trigger this workflow
+
+jobs:
+  download-video:
+    runs-on: ubuntu-latest
+    steps:
+    
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true  # Enable Git LFS
+
+      - name: Install Dependencies
+        run: |
+          pip install gdown
+          sudo apt-get install git-lfs  # Install Git LFS
+          git lfs install
+
+      - name: Download Video from Google Drive
+        run: |
+          gdown --id 1GGtvDWqLZQieNmVhp0CG5pmg2LDFu4bE -O video.mp4
+          ls -lh video.mp4  # Check file size
+
+      - name: Track Video with Git LFS
+        run: |
+          git lfs track "*.mp4"
+          git add .gitattributes
+          git add video.mp4
+          git commit -m "Add downloaded video via Git LFS"
+
+      - name: Push to GitHub Repository
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}  # GitHub Token from Secrets
+        run: |
+          git remote set-url origin https://avakens139:${GH_TOKEN}@github.com/avakens139/test.git
+          git push origin main  # Change 'main' if needed
