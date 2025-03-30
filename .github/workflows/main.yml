@@ -1,0 +1,24 @@
+Video file name : video.mp4
+
+
+name: YouTube Live Stream
+
+on:
+  workflow_dispatch:  # Allows you to manually start the stream
+  schedule:
+    - cron: "0 */6 * * *"  # Automatically restarts every 6 hours
+
+jobs:
+  stream:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Install ffmpeg
+      run: sudo apt update && sudo apt install -y ffmpeg
+
+    - name: Stream Video to YouTube
+      run: |
+        ffmpeg -re -stream_loop -1 -i video.mp4 -c:v libx264 -preset veryfast -b:v 2500k -maxrate 2500k -bufsize 5000k -c:a aac -b:a 128k -f flv "rtmp://a.rtmp.youtube.com/live2/1axq-th5h-t5rq-g4x1-9q7d"
