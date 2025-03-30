@@ -1,0 +1,36 @@
+name: Download and Commit Video using Git LFS
+
+on: [workflow_dispatch]
+
+jobs:
+  download_video:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          lfs: true  # Enable Git LFS
+
+      - name: Install gdown
+        run: pip install gdown
+
+      - name: Download Video from Google Drive
+        run: |
+          gdown --id 1GGtvDWqLZQieNmVhp0CG5pmg2LDFu4bE --output video.mp4
+
+      - name: Install Git LFS
+        run: |
+          git lfs install
+          git lfs track "*.mp4"
+          git add .gitattributes
+
+      - name: Commit and Push Video File
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          git config --global user.name "avakens139"
+          git config --global user.email "github-actions@github.com"
+          git add video.mp4
+          git commit -m "Add downloaded video using Git LFS"
+          git push https://avakens139:$GH_PAT@github.com/avakens139/test.git HEAD:main
