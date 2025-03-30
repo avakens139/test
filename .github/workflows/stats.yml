@@ -24,6 +24,11 @@ jobs:
           gdown --id 1GGtvDWqLZQieNmVhp0CG5pmg2LDFu4bE -O video.mp4
           ls -lh video.mp4  # Check file size
 
+      - name: Configure Git User
+        run: |
+          git config --global user.email "samavakens3000@gmail.com"
+          git config --global user.name "avakens139"
+
       - name: Track Video with Git LFS
         run: |
           git lfs track "*.mp4"
